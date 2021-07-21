@@ -1,0 +1,6 @@
+*.dll
+gui.vcxproj.user
+gui.vcxproj.filters
+gui.vcxproj
+Debug
+Release

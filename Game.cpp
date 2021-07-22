@@ -5,7 +5,7 @@ void Game::initVariables() {
 	this->window = nullptr;
 
 	this->points = 0;
-	this->tiles = 4;
+	this->tiles = 16;
 	this->ballPositionX = 5;
 	this->ballPositionY = 2;
 
@@ -30,23 +30,29 @@ void Game::initPlatform() {
 }
 
 void Game::initCircle() {
-	this->ball.setRadius(50);
+	this->ball.setRadius(10.f);
 	this->ball.setPosition(0.f, 80.f);
 }
 
 void Game::initTiles() {
 	int positionX = 0;
+	int positionY = 0;
 
 	for (int i = 0; i < this->tiles; i++) {
 		sf::RectangleShape tile;
 		tile.setSize(sf::Vector2f(195.f, 25.f));
-		tile.setFillColor(sf::Color::Green);
+		tile.setFillColor(sf::Color(rand() %255 + 1, rand() % 255 + 1, rand() % 255 + 1));
 		tile.setOutlineThickness(5.f);
 		tile.setOutlineColor(sf::Color::Black);
-		tile.setPosition(positionX, 0);
+		tile.setPosition(positionX, positionY);
 
 		this->tileArray.push_back(tile);
-		positionX += 200.f;
+
+		if (positionX > 800.f) {
+			positionX = 0;
+			positionY += 30;
+		}
+		else positionX += 200.f;
 	}
 }
 
@@ -87,15 +93,15 @@ void Game::movePlatformRigth() {
 void Game::jumpingBall()
 {
 	//OX parametrs
-	if (this->ball.getPosition().x > 700.f)
+	if (this->ball.getPosition().x > 760.f)
 		this->ballPositionX = -5;
 	else if (this->ball.getPosition().x < 0.f)
 		this->ballPositionX = 5;
 
 	//OY parametrs
-	if (this->ball.getPosition().y > 500.f) {
+	if (this->ball.getPosition().y > 560.f) {
 		this->window->close();
-		std::cout << "You lose :(\n";
+		printf("You lose :(\n");
 	}
 	else if (this->ball.getPosition().y < 0.f)
 		this->ballPositionY = rand() % 5 + 1;
@@ -111,15 +117,21 @@ void Game::checkCollisionPlatformWithBall() {
 	}
 }
 
-//checking collision ball with tiles
-//Bug here :((
-//have to repair this shit function
-
 void Game::checkCollisionBallWithTile() {
 	for (int i = 0; i < this->tileArray.size(); i++) {
-		if (this->ball.getGlobalBounds().intersects(this->tileArray[i].getGlobalBounds()))
-			printf("%d position", i + 1);
-			//this->tileArray.erase(std::remove(this->tileArray.begin(), this->tileArray.end(), this->tileArray[i]));
+		if (this->ball.getGlobalBounds().intersects(this->tileArray[i].getGlobalBounds())) {
+			printf("%d position\n", i + 1);
+			this->tileArray.erase(this->tileArray.begin() + i);
+			this->ballPositionY = rand() % 5 + 1;
+		}
+	}
+}
+
+//Checking the game status
+void Game::checkWinStatus() {
+	if (this->tileArray.size() == 0) {
+		printf("You win the game! Congratulations!\n");
+		this->window->close();
 	}
 }
 
@@ -151,6 +163,7 @@ void Game::update()
 	this->jumpingBall();
 	this->checkCollisionPlatformWithBall();
 	this->checkCollisionBallWithTile();
+	this->checkWinStatus();
 }
 
 void Game::renderTiles() {

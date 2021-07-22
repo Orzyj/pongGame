@@ -38,14 +38,6 @@ private:
 	sf::RectangleShape platform;
 	sf::CircleShape ball;
 
-	/*
-	* the next step today, or tomorrow is 
-	* make "klocki" underneath the title bar, 8 block
-	* and after smash by ball them, they will disappear
-	* 
-	* and make ball smaller
-	*/
-
 	//Private functions
 	void initVariables();
 	void initWindow();
@@ -73,6 +65,7 @@ public:
 	void jumpingBall();
 	void checkCollisionPlatformWithBall();
 	void checkCollisionBallWithTile();
+	void checkWinStatus();
 };
 
 #endif
